@@ -4,6 +4,6 @@ There are boost's shared memory wrapper. Transmitter class is server and Receive
 
 This library is header-only (there's nothing to build).
 
-## Dependencies
+## Requirements
 
-Boost library v.1.77.0 or later.
+- Boost library v1.77.0 or later
