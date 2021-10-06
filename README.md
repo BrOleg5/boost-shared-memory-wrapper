@@ -6,4 +6,4 @@ This library is header-only (there's nothing to build).
 
 ## Requirements
 
-- Boost library v1.77.0 or later
+- Boost library v1.71.0 or later

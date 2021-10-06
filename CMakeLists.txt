@@ -6,6 +6,8 @@ add_subdirectory(test)
 
 add_library(shared_memory INTERFACE)
 
+find_package(Boost 1.71.0 REQUIRED)
+
 # set_target_properties(shared_memory PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(shared_memory INTERFACE
@@ -14,5 +16,5 @@ target_link_libraries(shared_memory INTERFACE
 
 target_include_directories(shared_memory 
                            INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                           INTERFACE "/usr/local/boost_1_77_0"
+                           INTERFACE "${Boost_INCLUDE_DIRS}"
                            )
