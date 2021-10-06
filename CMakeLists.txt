@@ -4,14 +4,15 @@ project(shared_memory VERSION 1.0 DESCRIPTION "Shared memory wrapper that is bas
 
 add_subdirectory(test)
 
-add_library(shared_memory include/sharedmemory.hpp)
+add_library(shared_memory INTERFACE)
 
-set_target_properties(shared_memory PROPERTIES LINKER_LANGUAGE CXX)
+# set_target_properties(shared_memory PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(shared_memory PUBLIC
+target_link_libraries(shared_memory INTERFACE
                       ${Boost_LIBRARIES} rt
                       ${Boost_LIBRARIES} pthread )
 
 target_include_directories(shared_memory 
-                           PRIVATE "/usr/local/boost_1_77_0"
-                           PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+                           INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                           INTERFACE "/usr/local/boost_1_77_0"
+                           )
