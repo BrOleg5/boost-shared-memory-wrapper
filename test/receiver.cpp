@@ -2,8 +2,10 @@
 #include <iostream>
 #include <unistd.h>
 
+using namespace shm;
+
 int main() {
-    Receiver<float>  receiver("SMF");
+    shm::Receiver<float>  receiver("SMF");
     unsigned int microsecond = 1000000;
     while (true)
     {
