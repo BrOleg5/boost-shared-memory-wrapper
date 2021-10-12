@@ -4,10 +4,6 @@ cmake_policy(SET CMP0054 NEW)
 
 project(SharedMemory VERSION 1.1 DESCRIPTION "Shared memory wrapper that is based on boost library.")
 
-# set header
-set(HEADER_PATH "${SharedMemory_SOURCE_DIR}/include")
-set(header ${HEADER_PATH}/sharedmemory.hpp)
-
 # set cmake config install dirs
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INSTALL_CMAKE_DIR CMake)
@@ -16,7 +12,6 @@ else()
 endif()
 set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
   "Installation directory for CMake files")
-
 
 include(GNUInstallDirs)
 
@@ -30,7 +25,7 @@ if(BUILD_TESTS OR INSTALL_TESTS)
 endif()
 
 # Add all targets to the build-tree export set
-if(BUILD_TESTS)
+if(BUILD_TESTS OR INSTALL_TESTS) 
   export(TARGETS SharedMemoryLib transmitter receiver
          FILE "${PROJECT_BINARY_DIR}/SharedMemoryTargets.cmake")
 else()
