@@ -1,12 +1,25 @@
 add_executable(transmitter transmitter.cpp)
+
+target_link_libraries(transmitter PUBLIC SharedMemoryLib)
+
+# target_include_directories(transmitter
+        # PUBLIC "${SharedMemory_SOURCE_DIR}/include")
+
+if(INSTALL_TESTS)
+        install(TARGETS transmitter
+                EXPORT SharedMemoryTargets
+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/SharedMemoryTest" COMPONENT bin)
+endif()
+
 add_executable(receiver receiver.cpp)
 
-target_link_libraries(transmitter PUBLIC shared_memory)
+target_link_libraries(receiver PUBLIC SharedMemoryLib)
 
-target_include_directories(transmitter
-        PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+# target_include_directories(receiver
+        # PUBLIC "${SharedMemory_SOURCE_DIR}/include")
 
-target_link_libraries(receiver PUBLIC shared_memory)
-
-target_include_directories(receiver
-        PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+if(INSTALL_TESTS)
+        install(TARGETS receiver
+                EXPORT SharedMemoryTargets
+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/SharedMemoryTest" COMPONENT bin)
+endif()
