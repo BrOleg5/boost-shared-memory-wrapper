@@ -2,7 +2,7 @@
 
 There are boost's shared memory wrapper. Transmitter class is server and Receiver class is client.
 
-This library is header-only (there's nothing to build).
+This library is header-only (there's nothing to build). You can simple copy header file from include directory and add to your project.
 
 Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/doc/libs/1_38_0/doc/html/interprocess/quick_guide.html
 ), in section Creating vectors in shared memory.
