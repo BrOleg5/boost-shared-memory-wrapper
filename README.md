@@ -25,8 +25,7 @@ cmake -S boost-shared-memory*wrapper/ -B build/
 cmake --build build/
 
 # Install
-
-cmake --install build/
+sudo cmake --install build/
 ```
 
 You can also build and install tests:
