@@ -9,7 +9,7 @@ Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/
 
 ## Requirements
 
-- CMake v2.8 or later
+- CMake v3.0 or later
 - Boost lbrary v1.71.0 or later
 
 ## Configure, build and install project
