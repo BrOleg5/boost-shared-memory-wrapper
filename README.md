@@ -15,7 +15,7 @@ Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/
 ## Configure, build and install project
 
 ```
-# Create build directiry
+# Create build directory
 mkdir build
 
 # Configure
@@ -31,7 +31,7 @@ sudo cmake --install build/
 You can also build and install tests:
 ```
 # Configure
-cmake -S boost-shared-memory*wrapper/ -B build/ -DBUILD_TESTS=ON -DINSTALL_TESTS=ON
+cmake -S boost-shared-memory-wrapper/ -B build/ -DBUILD_TESTS=ON -DINSTALL_TESTS=ON
 ```
 
 ## Using SharedMemory with gcc and CMake
