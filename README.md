@@ -19,7 +19,7 @@ Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/
 mkdir build
 
 # Configure
-cmake -S boost-shared-memory*wrapper/ -B build/
+cmake -S boost-shared-memory-wrapper/ -B build/
 
 # Build
 cmake --build build/
