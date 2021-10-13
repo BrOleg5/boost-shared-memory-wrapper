@@ -27,10 +27,10 @@ endif()
 # Add all targets to the build-tree export set
 if(BUILD_TESTS OR INSTALL_TESTS) 
   export(TARGETS SharedMemoryLib transmitter receiver
-         FILE "${PROJECT_BINARY_DIR}/SharedMemoryTargets.cmake")
+         FILE "${PROJECT_BINARY_DIR}/cmake/SharedMemoryTargets.cmake")
 else()
   export(TARGETS SharedMemoryLib
-         FILE "${PROJECT_BINARY_DIR}/SharedMemoryTargets.cmake")
+         FILE "${PROJECT_BINARY_DIR}/cmake/SharedMemoryTargets.cmake")
 endif()
 
 # Export the package for use from the build-tree
@@ -40,21 +40,21 @@ export(PACKAGE SharedMemory)
 # Create the SharedMemoryConfig.cmake and SharedMemoryConfigVersion files
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-configure_file(SharedMemoryConfig.cmake.in
-               "${PROJECT_BINARY_DIR}/SharedMemoryConfig.cmake" @ONLY)
+configure_file(cmake/SharedMemoryConfig.cmake.in
+               "${PROJECT_BINARY_DIR}/cmake/SharedMemoryConfig.cmake" @ONLY)
           
 # ... for the install tree
 set(CONF_INCLUDE_DIRS "\${SHAREDMEMORY_CMAKE_DIR}/${CMAKE_INSTALL_INCLUDEDIR}")
-configure_file(SharedMemoryConfig.cmake.in
-               "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SharedMemoryConfig.cmake" @ONLY)
+configure_file(cmake/SharedMemoryConfig.cmake.in
+               "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cmake/SharedMemoryConfig.cmake" @ONLY)
   
 # ... for both
-configure_file(SharedMemoryConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SharedMemoryConfigVersion.cmake" @ONLY)
+configure_file(cmake/SharedMemoryConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/cmake/SharedMemoryConfigVersion.cmake" @ONLY)
 
 # Install the SharedMemoryConfig.cmake and SharedMemoryConfigVersion files
 install(FILES
-        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SharedMemoryConfig.cmake"
-        "${PROJECT_BINARY_DIR}/SharedMemoryConfigVersion.cmake"
+        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/cmake/SharedMemoryConfig.cmake"
+        "${PROJECT_BINARY_DIR}/cmake/SharedMemoryConfigVersion.cmake"
         DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
 
 # Install the export set for use with the install-tree
