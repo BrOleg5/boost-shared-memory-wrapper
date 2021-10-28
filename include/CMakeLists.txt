@@ -2,9 +2,15 @@ add_library(SharedMemoryLib INTERFACE)
 
 find_package(Boost 1.71.0 REQUIRED)
 
-target_link_libraries(SharedMemoryLib INTERFACE
-                      ${Boost_LIBRARIES} rt
-                      ${Boost_LIBRARIES} pthread )
+if (WIN32 OR MSVC)
+    target_link_libraries(SharedMemoryLib INTERFACE
+                        ${Boost_LIBRARIES} )
+else() #Linux
+    target_link_libraries(SharedMemoryLib INTERFACE
+                        ${Boost_LIBRARIES}
+                        rt
+                        pthread )
+endif()
 
 target_include_directories(SharedMemoryLib INTERFACE
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
