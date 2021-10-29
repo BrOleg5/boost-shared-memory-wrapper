@@ -1,6 +1,10 @@
 #include "sharedmemory.hpp"
 #include <iostream>
-#include <unistd.h>
+#ifdef WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
 
 int main() {
     shm::Receiver<float>  receiver("SMF");
@@ -12,7 +16,12 @@ int main() {
             std::cout << receiver.data->at(j) << "  ";
         }
         std::cout << std::endl;
-        usleep(1 * microsecond);//sleeps for 1 second
+        //sleeps for 1 second
+        #ifdef WIN32
+            Sleep(1000);
+        #else
+            usleep(1 * microsecond);
+        #endif
     }
     return 0;
 }

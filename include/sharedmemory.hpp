@@ -6,11 +6,33 @@
 #ifndef SHAREDMEMORY_HPP
 #   define SHAREDMEMORY_HPP
 
-#include <boost/interprocess/managed_shared_memory.hpp>
+#ifdef WIN32
+    #include <boost/interprocess/managed_windows_shared_memory.hpp>
+#else
+    #include <boost/interprocess/managed_shared_memory.hpp>
+#endif
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
 
 using namespace boost::interprocess;
+
+/**
+ * For cross communication between x86 and x64 application.
+ * From stackoverflow @link https://stackoverflow.com/questions/18533527/boostinterprocess-shared-memory-between-32-and-64-bit-processes
+ */
+#ifdef WIN32
+using ManagedShMem = basic_managed_windows_shared_memory
+    <char,
+    boost::interprocess::rbtree_best_fit<
+        boost::interprocess::mutex_family,
+        boost::interprocess::offset_ptr<
+            void,
+            __int64,
+            unsigned __int64,
+            0>,
+        0>,
+    boost::interprocess::iset_index>;
+#endif
 
 namespace shm
 {
@@ -24,12 +46,20 @@ namespace shm
         private:
 
         const char *filename;
-        managed_shared_memory segment;
+        #ifdef WIN32
+            ManagedShMem segment;
+        #else
+            managed_shared_memory segment;
+        #endif
 
         //Alias an STL compatible allocator of ints that allocates ints from the managed
         //shared memory segment.  This allocator will allow to place containers
         //in managed shared memory segments
-        typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
+        #ifdef WIN32
+            typedef allocator<T, ManagedShMem::segment_manager> ShmemAllocator;
+        #else
+            typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
+        #endif
 
         //Alias a vector that uses the previous STL-like allocator
         typedef vector<T, ShmemAllocator> MyVector;
@@ -48,8 +78,14 @@ namespace shm
         Transmitter(const char *file_name, int file_size) : filename(file_name) {
             //First remove any old shared memory of the same name, create 
             //the shared memory segment and initialize needed resources
-            shared_memory_object::remove(filename);
-            segment = managed_shared_memory(create_only, filename, file_size);
+            #ifndef WIN32
+                shared_memory_object::remove(filename);
+            #endif
+            #ifdef WIN32
+                segment = ManagedShMem(create_only, filename, file_size);
+            #else
+                segment = managed_shared_memory(create_only, filename, file_size);
+            #endif
             //Initialize shared memory STL-compatible allocator
             const ShmemAllocator alloc_inst (segment.get_segment_manager());
 
@@ -58,7 +94,9 @@ namespace shm
         }
         ~Transmitter() {
             segment.destroy<MyVector>("MyVector");
-            shared_memory_object::remove(filename);
+            #ifndef WIN32
+                shared_memory_object::remove(filename);
+            #endif
         }
     };
 
@@ -72,11 +110,19 @@ namespace shm
         private:
 
         const char *filename;
-        managed_shared_memory segment;
+        #ifdef WIN32
+            ManagedShMem segment;
+        #else
+            managed_shared_memory segment;
+        #endif
         //Alias an STL compatible allocator of ints that allocates ints from the managed
         //shared memory segment.  This allocator will allow to place containers
         //in managed shared memory segments
-        typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
+        #ifdef WIN32
+            typedef allocator<T, ManagedShMem::segment_manager> ShmemAllocator;
+        #else
+            typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
+        #endif
 
         //Alias a vector that uses the previous STL-like allocator
         typedef vector<T, ShmemAllocator> MyVector;
@@ -94,7 +140,11 @@ namespace shm
         Receiver(const char *file_name) : filename(file_name) {
             //Connect to the already created shared memory segment
             //and initialize needed resources
-            segment = managed_shared_memory(open_only, file_name);
+            #ifdef WIN32
+                segment = ManagedShMem(open_only, file_name);
+            #else
+                segment = managed_shared_memory(open_only, file_name);
+            #endif
             //Find the array
             data = segment.find<MyVector>("MyVector").first;
         }

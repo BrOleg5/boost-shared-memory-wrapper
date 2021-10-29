@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 cmake_policy(SET CMP0054 NEW)
 
-project(SharedMemory VERSION 1.1 DESCRIPTION "Shared memory wrapper that is based on boost library.")
+project(SharedMemory VERSION 1.2 DESCRIPTION "Shared memory wrapper that is based on boost library.")
 
 # set cmake config install dirs
 if(WIN32 AND NOT CYGWIN)

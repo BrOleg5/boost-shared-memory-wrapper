@@ -1,8 +1,16 @@
 #include "sharedmemory.hpp"
 #include <iostream>
-#include <unistd.h>
+#ifdef WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
 
 int main() {
+    // #ifdef WIN32
+    //     if (sizeof(char) != 2) throw std::exception("Set your chars right!");
+    // #endif
+
     shm::Transmitter<float>  transmitter("SMF", 1000);
     unsigned int microsecond = 1000000;
     for (size_t j = 0; j < 7; j++)
@@ -15,11 +23,15 @@ int main() {
     {
         for (size_t j = 0; j < 7; j++)
         {
-            ++transmitter.data->at(j);
-            std::cout << transmitter.data->at(j) << "  ";
+            std::cout << ++transmitter.data->at(j) << "  ";
         }
         std::cout << std::endl;
-        usleep(1 * microsecond);//sleeps for 1 second
+        //sleeps for 1 second
+        #ifdef WIN32
+            Sleep(1000);
+        #else
+            usleep(1 * microsecond);
+        #endif
     }
     return 0;
 }
