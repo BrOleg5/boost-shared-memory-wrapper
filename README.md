@@ -10,9 +10,12 @@ Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/
 ## Requirements
 
 - CMake v3.0 or later
-- Boost lbrary v1.71.0 or later
+- Boost library v1.71.0 or later
+- gcc 9.3.0+ or MSVC 19+
 
 ## Configure, build and install project
+
+### Ubuntu 20.04
 
 ```
 # Create build directory
@@ -27,6 +30,42 @@ cmake --build build/
 # Install
 sudo cmake --install build/
 ```
+
+### Windows 10
+
+#### x86
+
+```
+# Create build directory
+mkdir build
+
+# Configure as static library
+cmake -S mobile-robot-localization/ -B build/ -G "Visual Studio 15"
+
+# Build library
+cmake --build build/
+
+# Install library
+sudo cmake --install build/
+```
+
+#### x64
+
+```
+# Create build directory
+mkdir build
+
+# Configure as static library
+cmake -S mobile-robot-localization/ -B build/ -G "Visual Studio 15 Win64"
+
+# Build library
+cmake --build build/
+
+# Install library
+sudo cmake --install build/
+```
+
+### Extra options
 
 You can also build and install tests:
 ```
