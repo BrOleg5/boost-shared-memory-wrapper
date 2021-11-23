@@ -40,7 +40,7 @@ sudo cmake --install build/
 mkdir build
 
 # Configure as static library
-cmake -S mobile-robot-localization/ -B build/ -G "Visual Studio 15"
+cmake -S boost-shared-memory-wrapper/ -B build/ -G "Visual Studio 15"
 
 # Build library
 cmake --build build/
@@ -56,7 +56,7 @@ sudo cmake --install build/
 mkdir build
 
 # Configure as static library
-cmake -S mobile-robot-localization/ -B build/ -G "Visual Studio 15 Win64"
+cmake -S boost-shared-memory-wrapper/ -B build/ -G "Visual Studio 15 Win64"
 
 # Build library
 cmake --build build/
@@ -73,7 +73,7 @@ You can also build and install tests:
 cmake -S boost-shared-memory-wrapper/ -B build/ -DBUILD_TESTS=ON -DINSTALL_TESTS=ON
 ```
 
-## Using SharedMemory with gcc and CMake
+## Using SharedMemory with CMake
 
 Add this strings in your CMakeLists.txt file:
 ```

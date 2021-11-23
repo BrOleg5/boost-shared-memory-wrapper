@@ -1,5 +1,14 @@
 add_executable(transmitter transmitter.cpp)
 
+# set include dirs
+if(WIN32 AND NOT CYGWIN)
+  set(DEF_BIN_DIR ${CMAKE_INSTALL_BINDIR}/test)
+else()
+  set(DEF_BIN_DIR ${CMAKE_INSTALL_BINDIR}/SharedMemoryTest)
+endif()
+set(BIN_DIR ${DEF_BIN_DIR} CACHE PATH
+  "Installation directory for executable files")
+
 target_link_libraries(transmitter PUBLIC SharedMemoryLib)
 
 # target_include_directories(transmitter
@@ -8,7 +17,7 @@ target_link_libraries(transmitter PUBLIC SharedMemoryLib)
 if(INSTALL_TESTS)
         install(TARGETS transmitter
                 EXPORT SharedMemoryTargets
-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/SharedMemoryTest" COMPONENT bin)
+                RUNTIME DESTINATION "${BIN_DIR}" COMPONENT bin)
 endif()
 
 add_executable(receiver receiver.cpp)
@@ -21,5 +30,5 @@ target_link_libraries(receiver PUBLIC SharedMemoryLib)
 if(INSTALL_TESTS)
         install(TARGETS receiver
                 EXPORT SharedMemoryTargets
-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/SharedMemoryTest" COMPONENT bin)
+                RUNTIME DESTINATION "${BIN_DIR}" COMPONENT bin)
 endif()
