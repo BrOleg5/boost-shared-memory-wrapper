@@ -33,6 +33,8 @@ sudo cmake --install build/
 
 ### Windows 10
 
+Command shell or PowerShell will be run as administrator to install library in system partition.
+
 #### x86
 
 ```
