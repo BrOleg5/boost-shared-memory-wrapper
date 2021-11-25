@@ -2,7 +2,7 @@ add_library(SharedMemoryLib INTERFACE)
 
 find_package(Boost 1.71.0 REQUIRED)
 
-# set include dirs
+# set include dir
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR})
 else()

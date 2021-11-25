@@ -13,6 +13,7 @@
 #endif
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
+#include <stdexcept>
 
 using namespace boost::interprocess;
 
@@ -67,6 +68,11 @@ namespace shm
         public:
 
         MyVector *data;
+
+        /**
+         * Default constructor.
+         */
+        Transmitter() {}
 
         /**
          * Initialize shared memory.
@@ -132,6 +138,11 @@ namespace shm
         MyVector* data;
 
         /**
+         * Default constructor.
+         */
+        Receiver() {}
+
+        /**
          * Initialize shared memory.
          * 
          * @param file_name name of shared memory file.
@@ -147,10 +158,32 @@ namespace shm
             #endif
             //Find the array
             data = segment.find<MyVector>("MyVector").first;
+            if (data == 0) {
+                throw std::runtime_error("Don't find data.\n");
+            }
         }
-        ~Receiver() {
-            // segment.destroy<MyVector>("MyVector");
-            // shared_memory_object::remove(filename);
+        ~Receiver() {}
+
+        Receiver& operator=(const Receiver& other) {
+            // Guard self assignment
+            if (this == &other) {
+                return *this;
+            }
+
+            filename = other.filename;
+            //Connect to the already created shared memory segment
+            //and initialize needed resources
+            #ifdef WIN32
+                segment = ManagedShMem(open_only, filename);
+            #else
+                segment = managed_shared_memory(open_only, filename);
+            #endif
+            //Find the array
+            data = segment.find<MyVector>("MyVector").first;
+            if (data == 0) {
+                throw std::runtime_error("Don't find data.\n");
+            }
+            return *this;
         }
     };
 }

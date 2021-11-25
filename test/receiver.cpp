@@ -7,7 +7,14 @@
 #endif
 
 int main() {
-    shm::Receiver<float>  receiver("SMF");
+    shm::Receiver<float>  receiver;
+    try {
+        receiver = shm::Receiver<float>("SMF");
+    }
+    catch(const std::exception& e) {
+        std::cout << "Receiver constructor failed with error: " << e.what();
+        return 1;
+    }
     unsigned int microsecond = 1000000;
     while (true)
     {

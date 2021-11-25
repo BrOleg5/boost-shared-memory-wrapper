@@ -1,6 +1,6 @@
 add_executable(transmitter transmitter.cpp)
 
-# set include dirs
+# set test dir
 if(WIN32 AND NOT CYGWIN)
   set(DEF_BIN_DIR ${CMAKE_INSTALL_BINDIR}/test)
 else()
