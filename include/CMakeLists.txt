@@ -27,6 +27,5 @@ target_include_directories(SharedMemoryLib INTERFACE
                            "${Boost_INCLUDE_DIRS}"
                            )
 
-# IMPORTANT: Add the foo library to the "export-set"
 install(TARGETS SharedMemoryLib EXPORT SharedMemoryTargets)
 install(FILES sharedmemory.hpp DESTINATION "${INCLUDE_DIR}")

@@ -14,7 +14,7 @@ target_link_libraries(transmitter PUBLIC SharedMemoryLib)
 # target_include_directories(transmitter
         # PUBLIC "${SharedMemory_SOURCE_DIR}/include")
 
-if(INSTALL_TESTS)
+if(BUILD_TESTS)
         install(TARGETS transmitter
                 EXPORT SharedMemoryTargets
                 RUNTIME DESTINATION "${BIN_DIR}" COMPONENT bin)
@@ -27,7 +27,7 @@ target_link_libraries(receiver PUBLIC SharedMemoryLib)
 # target_include_directories(receiver
         # PUBLIC "${SharedMemory_SOURCE_DIR}/include")
 
-if(INSTALL_TESTS)
+if(BUILD_TESTS)
         install(TARGETS receiver
                 EXPORT SharedMemoryTargets
                 RUNTIME DESTINATION "${BIN_DIR}" COMPONENT bin)
