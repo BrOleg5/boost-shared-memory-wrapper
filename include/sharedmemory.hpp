@@ -47,6 +47,8 @@ namespace shm
         private:
 
         const char *filename;
+        size_t filesize;
+        bool allocated_memory_flag = false;
         #ifdef WIN32
             ManagedShMem segment;
         #else
@@ -79,30 +81,45 @@ namespace shm
          * 
          * @param file_name name of shared memory file.
          * @param file_size size of shared memory file.
-         * @param data_size
          */
-        Transmitter(const char *file_name, int file_size) : filename(file_name) {
+        Transmitter(const char *file_name, size_t file_size) : filename(file_name), filesize(file_size) {
+            create(file_name, file_size);
+        }
+
+        ~Transmitter() {
+            if(allocated_memory_flag) {
+                segment.destroy<MyVector>("MyVector");
+            }
+            #ifndef WIN32
+                shared_memory_object::remove(filename);
+            #endif
+        }
+
+        /**
+         * Create shared memory.
+         * 
+         * @param file_name name of shared memory file.
+         * @param file_size size of shared memory file.
+         */
+        void create(const char *file_name, size_t file_size) {
+            filename = file_name;
+            filesize = file_size;
             //First remove any old shared memory of the same name, create 
             //the shared memory segment and initialize needed resources
             #ifndef WIN32
                 shared_memory_object::remove(filename);
             #endif
             #ifdef WIN32
-                segment = ManagedShMem(create_only, filename, file_size);
+                segment = ManagedShMem(open_or_create, filename, filesize);
             #else
-                segment = managed_shared_memory(create_only, filename, file_size);
+                segment = managed_shared_memory(open_or_create, filename, filesize);
             #endif
             //Initialize shared memory STL-compatible allocator
             const ShmemAllocator alloc_inst (segment.get_segment_manager());
 
             //Construct a shared memory
             data = segment.construct<MyVector>("MyVector") (alloc_inst);
-        }
-        ~Transmitter() {
-            segment.destroy<MyVector>("MyVector");
-            #ifndef WIN32
-                shared_memory_object::remove(filename);
-            #endif
+            allocated_memory_flag = true;
         }
     };
 
@@ -129,7 +146,6 @@ namespace shm
         #else
             typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
         #endif
-
         //Alias a vector that uses the previous STL-like allocator
         typedef vector<T, ShmemAllocator> MyVector;
 
@@ -146,7 +162,6 @@ namespace shm
          * Initialize shared memory.
          * 
          * @param file_name name of shared memory file.
-         * @param data_size element number of array type T.
          */
         Receiver(const char *file_name) : filename(file_name) {
             //Connect to the already created shared memory segment
@@ -159,11 +174,16 @@ namespace shm
             //Find the array
             data = segment.find<MyVector>("MyVector").first;
             if (data == 0) {
-                throw std::runtime_error("Don't find data.\n");
+                throw std::runtime_error("Don't find MyVector.\n");
             }
         }
         ~Receiver() {}
 
+        /**
+         * Copy assignment.
+         * 
+         * @param other Receiver object.
+         */
         Receiver& operator=(const Receiver& other) {
             // Guard self assignment
             if (this == &other) {
@@ -181,7 +201,7 @@ namespace shm
             //Find the array
             data = segment.find<MyVector>("MyVector").first;
             if (data == 0) {
-                throw std::runtime_error("Don't find data.\n");
+                throw std::runtime_error("Don't find MyVector.\n");
             }
             return *this;
         }

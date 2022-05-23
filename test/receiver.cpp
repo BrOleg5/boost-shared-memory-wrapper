@@ -12,8 +12,8 @@ int main() {
         receiver = shm::Receiver<float>("SMF");
     }
     catch(const std::exception& e) {
-        std::cout << "Receiver constructor failed with error: " << e.what();
-        return 1;
+        throw(e);
+        return -1;
     }
     unsigned int microsecond = 1000000;
     while (true)

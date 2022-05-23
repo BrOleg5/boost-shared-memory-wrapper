@@ -7,7 +7,14 @@
 #endif
 
 int main() {
-    shm::Transmitter<float>  transmitter("SMF", 1000);
+    shm::Transmitter<float> transmitter;
+    try{
+        transmitter.create("SMF", 1000);
+    }
+    catch(std::exception& e) {
+        throw(e);
+        return -1;
+    }
     unsigned int microsecond = 1000000;
     for (size_t j = 0; j < 7; j++)
     {
