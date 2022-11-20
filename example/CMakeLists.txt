@@ -19,7 +19,10 @@ add_executable(receiver receiver.cpp)
 set_target_properties(receiver PROPERTIES 
                       PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/include/sharedmemory.hpp")
 
-target_link_libraries(receiver PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(receiver PUBLIC
+                      ${Boost_LIBRARIES}
+                      rt
+                      pthread)
 
 target_include_directories(receiver PUBLIC 
                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
