@@ -5,7 +5,10 @@ set_target_properties(transmitter PROPERTIES
 
 find_package(Boost 1.71.0 REQUIRED)
 
-target_link_libraries(transmitter PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(transmitter PUBLIC
+                      ${Boost_LIBRARIES}
+                      rt
+                      pthread)
 
 target_include_directories(transmitter PUBLIC 
                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
