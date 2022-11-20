@@ -32,12 +32,12 @@ You can build and install test program. For this add option `-D BUILD_TEST=ON`.
 
 ```bash
 # Configure
-cmake -S boost-shared-memory-wrapper/ -B build/ -DBUILD_TESTS=ON
+cmake -S boost-shared-memory-wrapper/ -B build/ -D BUILD_TESTS=ON
 ```
 
 Also add `-D BUILD_EXAMPLE=ON` option to build examples programs: transmitter and receiver.
 
 ```bash
 # Configure
-cmake -S boost-shared-memory-wrapper/ -B build/ -DBUILD_TESTS=ON
+cmake -S boost-shared-memory-wrapper/ -B build/ -D BUILD_EXAMPLE=ON
 ```
