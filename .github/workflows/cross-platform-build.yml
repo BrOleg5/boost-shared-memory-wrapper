@@ -1,4 +1,4 @@
-name: Windows
+name: Cross platform build
 
 on:
   push:
@@ -13,13 +13,19 @@ env:
   BOOST_URL: https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.bz2/download
 
 jobs:
-  MSVC:
-    runs-on: windows-2019
+  cross-platform-build:
     strategy:
       matrix:
+        os: [windows-2022, windows-2019, ubuntu-22.04, ubuntu-20.04]
         build_type: [Debug, Release]
-        architecture: [Win32, x64]
-        generator_type: [Visual Studio 15 2017, Visual Studio 16 2019, Visual Studio 17 2022]
+        include:
+          - os: windows-2022
+            cmake_generator: Visual Studio 17 2022
+            architecture: [Win32, x64]
+          - os: windows-2019
+            cmake_generator: Visual Studio 16 2019
+            architecture: [Win32, x64]
+    runs-on: ${{ matrix.os }}
     
     steps:
     - uses: actions/checkout@v3
@@ -47,9 +53,17 @@ jobs:
         rm -rf boost_*/* download.tar.bz2 download.tar
       shell: bash
 
-    - name: CMake configure
+    - name: CMake configure on Windows
+      if: startWith(matrix.os, 'windows')
       run: |
-        cmake -S . -B build -G "${{ matrix.generator_type }}" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
+        cmake -S . -B build -G "${{ matrix.cmake_generator }}" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
+      env:
+        BOOST_ROOT: ${{ env.BOOST_ROOT }}
+    
+    - name: CMake configure on Ubuntu
+      if: startWith(matrix.os, 'ubuntu')
+      run: |
+        cmake -S . -B build -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
       env:
         BOOST_ROOT: ${{ env.BOOST_ROOT }}
 
@@ -60,4 +74,4 @@ jobs:
     - name: Run test
       run: |
         cd build/test/${{ matrix.build_type }}
-        shared_memory_test.exe
+        ./shared_memory_test.exe
