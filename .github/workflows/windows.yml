@@ -8,6 +8,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  BOOST_MAJOR_VERSION: 1
+  BOOST_MINOR_VERSION: 78
+  BOOST_PATCH_VERSION: 0
+  BOOST_ROOT: C:\boost_$BOOST_MAJOR_VERSION_$BOOST_MINOR_VERSION_$BOOST_PATCH_VERSION
+  BOOST_URL: https://sourceforge.net/projects/boost/files/boost/$BOOST_MAJOR_VERSION.$BOOST_MINOR_VERSION.$BOOST_PATCH_VERSION/boost_MAJOR_VERSION_$BOOST_MINOR_VERSION_$BOOST_PATCH_VERSION.tar.bz2/download
+
 jobs:
   msvc2019:
     runs-on: windows-2019
@@ -17,21 +24,42 @@ jobs:
         architecture: [Win32, x64]
     
     steps:
-    - uses: actions/checkout@v3
-    - name: Install boost
-      uses: MarkusJx/install-boost@v2.4.1
-      id: install-boost
+    # source: https://github.com/actions/runner-images/issues/2667#issuecomment-778655341 
+    - name: Restore Boost cache
+      uses: actions/cache@v2
+      id: cache-boost
       with:
-        boost_version: 1.78.0
-        boost_install_dir: C:\boost_1_78_0
-        platform_version: 2019
-        toolset: msvc
+        path: ${{ env.BOOST_ROOT }}
+        key: boost
+
+    - name: Download Boost
+      if: steps.cache-boost.outputs.cache-hit != 'true'
+      run: |
+        if [ "$OS" == "Windows_NT" ]; then
+          # fix up paths to be forward slashes consistently
+          BOOST_ROOT=$(echo $BOOST_ROOT | sed 's/\\/\//g')
+        fi
+        mkdir -p $BOOST_ROOT
+        curl --progress-bar --location --output $BOOST_ROOT/download.tar.bz2 $BOOST_URL
+        7z -o$BOOST_ROOT x $BOOST_ROOT/download.tar.bz2 -y -bd
+        7z -o$BOOST_ROOT x $BOOST_ROOT/download.tar -y -bd
+        cd $BOOST_ROOT && cp -r boost_*/* .
+        rm -rf boost_*/* download.tar.bz2 download.tar
+      shell: bash
+
+    - uses: actions/checkout@v3
+
     - name: CMake configure
       run: |
-        cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
+        cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON \
+        -D BUILD_EXAMPLE=ON -D CMAKE_PREFIX_PATH="C:\boost_1_78_0"
+      env:
+        BOOST_ROOT: ${{ env.BOOST_ROOT }}
+
     - name: CMake build
       run: |
         cmake --build build --config ${{ matrix.build_type }} --parallel 10
+
     - name: CTest
       run: |
         cd build
