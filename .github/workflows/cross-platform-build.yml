@@ -25,6 +25,7 @@ jobs:
           - os: windows-2019
             cmake_generator: Visual Studio 16 2019
             architecture: [Win32, x64]
+
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -71,7 +72,14 @@ jobs:
       run: |
         cmake --build build --config ${{ matrix.build_type }}
 
-    - name: Run test
+    - name: Run test on Windows
+      if: startsWith(matrix.os, 'windows')
       run: |
         cd build/test/${{ matrix.build_type }}
         ./shared_memory_test.exe
+
+    - name: Run test on Windows
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        cd build/test/
+        ./shared_memory_test
