@@ -1,0 +1,38 @@
+name: Windows
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  msvc2016:
+    runs-on: windows-2016
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        architecture: [Win32, x64]
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install boost
+      uses: MarkusJx/install-boost@v2.4.1
+      id: install-boost
+      with:
+        boost_version: 1.71.0
+        boost_install_dir: C:\boost_1_71_0
+        platform_version: 2016
+        toolset: msvc
+    - name: CMake configure
+      run: |
+        cmake -S . -B build -G "Visual Studio 14 2016" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
+    - name: CMake build
+      run: |
+        cmake --build build --config ${{ matrix.build_type }} --parallel 10
+    - name: CTest
+      run: |
+        cd build
+        ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
