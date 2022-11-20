@@ -54,14 +54,14 @@ jobs:
       shell: bash
 
     - name: CMake configure on Windows
-      if: startWith(matrix.os, 'windows')
+      if: startsWith(matrix.os, 'windows')
       run: |
         cmake -S . -B build -G "${{ matrix.cmake_generator }}" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
       env:
         BOOST_ROOT: ${{ env.BOOST_ROOT }}
     
     - name: CMake configure on Ubuntu
-      if: startWith(matrix.os, 'ubuntu')
+      if: startsWith(matrix.os, 'ubuntu')
       run: |
         cmake -S . -B build -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
       env:
