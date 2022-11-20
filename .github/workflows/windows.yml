@@ -49,15 +49,15 @@ jobs:
     - name: CMake configure
       run: |
         cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON \
-        -D BUILD_EXAMPLE=ON
+          -D BUILD_EXAMPLE=ON
       env:
         BOOST_ROOT: ${{ env.BOOST_ROOT }}
 
     - name: CMake build
       run: |
-        cmake --build build --config ${{ matrix.build_type }} --parallel 10
+        cmake --build build --config ${{ matrix.build_type }}
 
     - name: CTest
       run: |
         cd build
-        ctest -j 10 -C ${{ matrix.build_type }} --output-on-failure
+        ctest -C ${{ matrix.build_type }} --output-on-failure
