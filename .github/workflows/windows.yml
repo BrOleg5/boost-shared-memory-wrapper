@@ -28,7 +28,7 @@ jobs:
         toolset: msvc
     - name: CMake configure
       run: |
-        cmake -S . -B build -G "Visual Studio 14 2016" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
+        cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
     - name: CMake build
       run: |
         cmake --build build --config ${{ matrix.build_type }} --parallel 10
