@@ -21,6 +21,8 @@ jobs:
         architecture: [Win32, x64]
     
     steps:
+    - uses: actions/checkout@v3
+    
     # source: https://github.com/actions/runner-images/issues/2667#issuecomment-778655341 
     - name: Restore Boost cache
       uses: actions/cache@v2
@@ -44,12 +46,9 @@ jobs:
         rm -rf boost_*/* download.tar.bz2 download.tar
       shell: bash
 
-    - uses: actions/checkout@v3
-
     - name: CMake configure
       run: |
-        cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON \
-          -D BUILD_EXAMPLE=ON
+        cmake -S . -B build -G "Visual Studio 16 2019" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
       env:
         BOOST_ROOT: ${{ env.BOOST_ROOT }}
 
