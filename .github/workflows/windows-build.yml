@@ -1,4 +1,4 @@
-name: Cross platform build
+name: Windows build
 
 on:
   push:
@@ -16,22 +16,20 @@ jobs:
   cross-platform-build:
     strategy:
       matrix:
-        os: [windows-2022, windows-2019, ubuntu-22.04, ubuntu-20.04]
+        os: [windows-2022, windows-2019]
         build_type: [Debug, Release]
+        architecture: [Win32, x64]
         include:
           - os: windows-2022
             cmake_generator: Visual Studio 17 2022
-            architecture: [Win32, x64]
           - os: windows-2019
             cmake_generator: Visual Studio 16 2019
-            architecture: [Win32, x64]
 
     runs-on: ${{ matrix.os }}
     
     steps:
     - uses: actions/checkout@v3
 
-    # source: https://github.com/actions/runner-images/issues/2667#issuecomment-778655341 
     - name: Restore Boost cache
       uses: actions/cache@v3
       id: cache-boost
@@ -39,13 +37,12 @@ jobs:
         path: ${{ env.BOOST_ROOT }}
         key: boost_1_78_0
 
+    # source: https://github.com/actions/runner-images/issues/2667#issuecomment-778655341 
     - name: Download Boost
       if: steps.cache-boost.outputs.cache-hit != 'true'
       run: |
-        if [ "$OS" == "Windows_NT" ]; then
-          # fix up paths to be forward slashes consistently
-          BOOST_ROOT=$(echo $BOOST_ROOT | sed 's/\\/\//g')
-        fi
+        # fix up paths to be forward slashes consistently
+        BOOST_ROOT=$(echo $BOOST_ROOT | sed 's/\\/\//g')
         mkdir -p $BOOST_ROOT
         curl --progress-bar --location --output $BOOST_ROOT/download.tar.bz2 $BOOST_URL
         7z -o$BOOST_ROOT x $BOOST_ROOT/download.tar.bz2 -y -bd
@@ -54,17 +51,9 @@ jobs:
         rm -rf boost_*/* download.tar.bz2 download.tar
       shell: bash
 
-    - name: CMake configure on Windows
-      if: startsWith(matrix.os, 'windows')
+    - name: CMake configure
       run: |
         cmake -S . -B build -G "${{ matrix.cmake_generator }}" -A ${{ matrix.architecture }} -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
-      env:
-        BOOST_ROOT: ${{ env.BOOST_ROOT }}
-    
-    - name: CMake configure on Ubuntu
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        cmake -S . -B build -D BUILD_TEST=ON -D BUILD_EXAMPLE=ON
       env:
         BOOST_ROOT: ${{ env.BOOST_ROOT }}
 
@@ -72,14 +61,7 @@ jobs:
       run: |
         cmake --build build --config ${{ matrix.build_type }}
 
-    - name: Run test on Windows
-      if: startsWith(matrix.os, 'windows')
+    - name: Run test
       run: |
         cd build/test/${{ matrix.build_type }}
         ./shared_memory_test.exe
-
-    - name: Run test on Windows
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        cd build/test/
-        ./shared_memory_test
