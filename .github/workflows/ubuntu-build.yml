@@ -13,7 +13,7 @@ env:
   BOOST_URL: https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.bz2/download
 
 jobs:
-  cross-platform-build:
+  build:
     strategy:
       matrix:
         os: [ubuntu-22.04, ubuntu-20.04]

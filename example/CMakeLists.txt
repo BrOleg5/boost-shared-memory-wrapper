@@ -8,7 +8,7 @@ find_package(Boost 1.71.0 REQUIRED)
 if(WIN32)
 target_link_libraries(transmitter PUBLIC
                       ${Boost_LIBRARIES})
-elseif(LINUX)
+elseif(UNIX AND NOT APPLE)
 target_link_libraries(transmitter PUBLIC
                       ${Boost_LIBRARIES}
                       rt
@@ -27,7 +27,7 @@ set_target_properties(receiver PROPERTIES
 if(WIN32)
 target_link_libraries(receiver PUBLIC
                       ${Boost_LIBRARIES})
-elseif(LINUX)
+elseif(UNIX AND NOT APPLE)
 target_link_libraries(receiver PUBLIC
                       ${Boost_LIBRARIES}
                       rt

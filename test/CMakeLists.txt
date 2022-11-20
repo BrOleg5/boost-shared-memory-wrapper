@@ -8,7 +8,7 @@ find_package(Boost 1.71.0 REQUIRED)
 if(WIN32)
 target_link_libraries(shared_memory_test PUBLIC
                       ${Boost_LIBRARIES})
-elseif(LINUX)
+elseif(UNIX AND NOT APPLE)
 target_link_libraries(shared_memory_test PUBLIC
                       ${Boost_LIBRARIES}
                       rt
