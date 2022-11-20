@@ -14,7 +14,7 @@ env:
 
 jobs:
   MSVC:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         build_type: [Debug, Release]
