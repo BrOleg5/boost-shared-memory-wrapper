@@ -2,16 +2,19 @@
 
 There are boost's shared memory wrapper. Transmitter class is server and Receiver class is client.
 
-This library is header-only (nothing to build). You can simple copy header file from include directory and add to your project.
+This library is header-only (nothing to build). You can simply copy header file from include directory and add to your project.
 
-Wrappers is based on official [Quick Guide for Impatient](https://www.boost.org/doc/libs/1_38_0/doc/html/interprocess/quick_guide.html
-), in section **Creating vectors in shared memory**.
+Wrappers are based on official [Quick Guide for Impatient](https://www.boost.org/doc/libs/1_38_0/doc/html/interprocess/quick_guide.html), in section **Creating vectors in shared memory**.
 
 ## Requirements
 
 - CMake v3.0 or later
 - Boost library v1.71.0 or later
 - compiler: gcc 9.3.0+ or MSVC 19+ (Visual Studio 2017)
+
+Optional:
+
+- Doxygen 1.8.0
 
 ## Build
 
@@ -40,4 +43,11 @@ Also add `-D BUILD_EXAMPLE=ON` option to build examples programs: transmitter an
 ```bash
 # Configure
 cmake -S boost-shared-memory-wrapper/ -B build/ -D BUILD_EXAMPLE=ON
+```
+
+To build Doxygen documentation, use target `doxygen` and configuration `Release`
+
+```bash
+cmake --build build --config Release --target doxygen --prefix <prefix>
+cmake --install build --config Release --target doxygen --prefix <prefix>
 ```

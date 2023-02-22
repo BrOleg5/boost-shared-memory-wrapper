@@ -17,11 +17,11 @@
 
 using namespace boost::interprocess;
 
+#ifdef WIN32
 /**
  * For cross communication between x86 and x64 application.
- * From stackoverflow @link https://stackoverflow.com/questions/18533527/boostinterprocess-shared-memory-between-32-and-64-bit-processes
+ * From stackoverflow: https://stackoverflow.com/questions/18533527/boostinterprocess-shared-memory-between-32-and-64-bit-processes
  */
-#ifdef WIN32
 using ManagedShMem = basic_managed_windows_shared_memory
     <char,
     boost::interprocess::rbtree_best_fit<
@@ -55,20 +55,23 @@ namespace shm
             managed_shared_memory segment;
         #endif
 
-        //Alias an STL compatible allocator of ints that allocates ints from the managed
-        //shared memory segment.  This allocator will allow to place containers
-        //in managed shared memory segments
+        // Alias an STL compatible allocator of ints that allocates ints from the managed
+        // shared memory segment.  This allocator will allow to place containers
+        // in managed shared memory segments
         #ifdef WIN32
             typedef allocator<T, ManagedShMem::segment_manager> ShmemAllocator;
         #else
             typedef allocator<T, managed_shared_memory::segment_manager> ShmemAllocator;
         #endif
 
-        //Alias a vector that uses the previous STL-like allocator
+        // Alias a vector that uses the previous STL-like allocator
         typedef vector<T, ShmemAllocator> MyVector;
 
         public:
 
+        /**
+         * Data vector that is allocated in shared memory.
+        */
         MyVector *data;
 
         /**
@@ -104,8 +107,8 @@ namespace shm
         void create(const char *file_name, size_t file_size) {
             filename = file_name;
             filesize = file_size;
-            //First remove any old shared memory of the same name, create 
-            //the shared memory segment and initialize needed resources
+            // First remove any old shared memory of the same name, create 
+            // the shared memory segment and initialize needed resources
             #ifndef WIN32
                 shared_memory_object::remove(filename);
             #endif
@@ -114,10 +117,10 @@ namespace shm
             #else
                 segment = managed_shared_memory(open_or_create, filename, filesize);
             #endif
-            //Initialize shared memory STL-compatible allocator
+            // Initialize shared memory STL-compatible allocator
             const ShmemAllocator alloc_inst (segment.get_segment_manager());
 
-            //Construct a shared memory
+            // Construct a shared memory
             data = segment.construct<MyVector>("MyVector") (alloc_inst);
             allocated_memory_flag = true;
         }
@@ -151,6 +154,9 @@ namespace shm
 
         public:
 
+        /**
+         * Data vector that is allocated in shared memory.
+        */
         MyVector* data;
 
         /**
@@ -191,14 +197,14 @@ namespace shm
             }
 
             filename = other.filename;
-            //Connect to the already created shared memory segment
-            //and initialize needed resources
+            // Connect to the already created shared memory segment
+            // and initialize needed resources
             #ifdef WIN32
                 segment = ManagedShMem(open_only, filename);
             #else
                 segment = managed_shared_memory(open_only, filename);
             #endif
-            //Find the array
+            // Find the array
             data = segment.find<MyVector>("MyVector").first;
             if (data == 0) {
                 throw std::runtime_error("Don't find MyVector.\n");
